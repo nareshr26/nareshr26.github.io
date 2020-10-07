@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+    <title>Car Service Booking</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="MainCSS.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<body ng-app="carServiceApp" ng-controller="carServiceController">
+<form id="mainForm">
+  <div class="container-fluid">
+    <div class="row textCenter" style="background: #337ab7;color: white;">
+        <h3>Car Service Booking</h3>
+    </div>
+    <div class="row" style="background: #d9edf7;">
+        <div class="col-lg-3"></div>
+        <div class="col-lg-6">
+            <table>
+                <tr>
+                    <td class="mainTablePadding">Customer Name</td>
+                    <td class="mainTablePadding"><input type="text" ng-model="cName" class="form-control" pattern="[A-Za-z]+$" required></td>
+                </tr>
+                <tr>
+                    <td class="mainTablePadding">Customer Phone number</td>
+                    <td class="mainTablePadding"><input type="tel" ng-model="cPhoneNumber" class="form-control" pattern="[0-9]{10}"></td>
+                </tr>
+                <tr>
+                    <td class="mainTablePadding">Customer Email</td>
+                    <td class="mainTablePadding"><input type="email" ng-model="cEmail" class="form-control"></td>
+                </tr>
+                <tr>
+                    <td class="mainTablePadding">Vehicle registration number</td>
+                    <td class="mainTablePadding"><input type="text" ng-model="VRN" class="form-control" pattern="^[a-zA-Z0-9]+$" required></td>
+                </tr>
+                <tr>
+                    <td class="mainTablePadding">Brand</td>
+                    <td class="mainTablePadding">
+                        <select ng-model="carBrand" class="form-control" required>
+                            <option value="">Select Brand</option>
+                            <option value="Audi">Audi</option>
+                            <option value="BMW">BMW</option>
+                            <option value="Ford">Ford</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="mainTablePadding">Model</td>
+                    <td class="mainTablePadding">
+                        <select ng-model="carModel" class="form-control" required>
+                            <option value="">Select Model</option>
+                            <option value="Audi RS7">Audi RS7</option>
+                            <option value="Audi A8">Audi A8</option>
+                            <option value="BMW X1">BMW X1</option>
+                            <option value="BMW X6">BMW X6</option>
+                            <option value="Ford figo">Ford figo</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="mainTablePadding">Fuel Type</td>
+                    <td class="mainTablePadding">
+                        <input type="radio" id="petrol" value="petrolCar" ng-model="fType" name="fuelType" required>Petrol
+                        <input type="radio" id="disel" value="diselCar" ng-model="fType" name="fuelType">Disel
+                    </td>
+                </tr>
+                <tr>
+                    <td class="mainTablePadding">Date & Time</td>
+                    <td class="mainTablePadding">
+                        <input type="date" ng-model="serviceDate" class="form-control" required>
+                        <input type="time" id="serviceTime" class="form-control" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="mainTablePadding">Auto pickup & drop</td>
+                    <td class="mainTablePadding"><input type="checkbox" value="true" ng-model="autoPickUp" class="form-check-input"></td>
+                </tr>
+                <tr>
+                    <td class="mainTablePadding" style="position: relative;left: 165px;padding-top: 25px;padding-bottom: 25px;">
+                        <input type="submit" class="textCenter btn btn-primary" ng-click="bookService()" value="Book Service">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-lg-3"></div>
+    </div>
+    <div class="row">
+        <div class="panel-group">
+            <div class="panel panel-default">
+              <div class="panel-heading" style="background: #337ab7;color: white;">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" href="#carDetail">Click here to see car service details </a>
+                </h4>
+              </div>
+              <div id="carDetail" class="panel-collapse collapse">
+                <div class="panel-body" ng-if="carServiceDetailArray.length==0" style="background: #d9edf7;">
+                    <p class="textCenter">No Record Found</p>
+                </div>
+                <div class="panel-body" ng-if="carServiceDetailArray.length>0" style="background: #d9edf7;">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="textCenter">Name</th>
+                                <th class="textCenter">Phone Number </th>
+                                <th class="textCenter">Email</th>
+                                <th class="textCenter">Registration Number</th>
+                                <th class="textCenter">Car Brand</th>
+                                <th class="textCenter">Car Model</th>
+                                <th class="textCenter">Fuel Type</th>
+                                <th class="textCenter">Date</th>
+                                <th class="textCenter">Time</th>
+                                <th class="textCenter">Auto pickup & Drop</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in carServiceDetailArray | orderBy:'-pickUpTime'">
+                                <td class="textCenter">{{item.customerName}}</td>
+                                <td class="textCenter">{{item.customerPhoneNumber || 'NA'}}</td>
+                                <td class="textCenter">{{item.customerEmail || 'NA'}}</td>
+                                <td class="textCenter">{{item.customerVehicleNumber}}</td>
+                                <td class="textCenter">{{item.customerCarBrand}}</td>
+                                <td class="textCenter">{{item.customerCarModel}}</td>
+                                <td class="textCenter">{{item.carFuelType}}</td>
+                                <td class="textCenter">{{item.pickUpDate | date : "dd-MMM-yyyy"}}</td>
+                                <td class="textCenter">{{item.pickUpTime | date : "hh:mm a"}}</td>
+                                <td class="textCenter" ng-if="item.autoPickUp">Yes</td>
+                                <td class="textCenter" ng-if="!item.autoPickUp">No</td>
+                                <td><button class="btn btn-danger" ng-click="deleteRow(item)">Cancel</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+  </div>
+</form>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script src="MainJS.js"></script>
+</html>
